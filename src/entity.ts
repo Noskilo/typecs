@@ -1,0 +1,112 @@
+import { Component, Properties } from "./component";
+
+import { WorldEntityManager } from "./world-entity-manager";
+
+export type EntityId = number;
+
+export class Entity {
+  private readonly flushCounter: number;
+
+  constructor(
+    private readonly id: EntityId,
+    private readonly entityManager: WorldEntityManager,
+  ) {
+    this.flushCounter = entityManager.stats.flushCounter;
+  }
+
+  private throwIfFlushed() {
+    if (this.flushCounter !== this.entityManager.stats.flushCounter) {
+      throw new Error("Flushed entity cannot be modified");
+    }
+  }
+
+  public addComponent<P extends Properties, T extends Component<P>>(
+    component: Component<P> | (new () => T),
+  ) {
+    this.throwIfFlushed();
+
+    const componentToAdd =
+      component instanceof Component ? component : new component();
+
+    const componentListIndex = this.entityManager.componentListIndexMap.get(
+      componentToAdd.constructor.name,
+    );
+
+    if (componentListIndex !== undefined) {
+      this.entityManager.components[componentListIndex][this.id] =
+        componentToAdd;
+    } else {
+      this.entityManager.componentListIndexMap.set(
+        componentToAdd.constructor.name,
+        this.entityManager.components.length,
+      );
+      const newSet: (Component<P> | undefined)[] = new Array(
+        this.entityManager.components[0]?.length ?? 0,
+      ).fill(undefined);
+      newSet[this.id] = componentToAdd;
+      this.entityManager.components.push(newSet);
+    }
+
+    const deadEntityIndex = this.entityManager.deadBuffer.indexOf(this.id);
+    if (deadEntityIndex !== -1) {
+      this.entityManager.deadBuffer.splice(deadEntityIndex, 1);
+    }
+
+    return this;
+  }
+
+  public removeComponent<P extends Properties, T extends Component<P>>(
+    componentRef: new (Properties: P) => T,
+  ) {
+    this.throwIfFlushed();
+
+    const componentListIndex = this.entityManager.componentListIndexMap.get(
+      componentRef.name,
+    );
+    if (componentListIndex === undefined) {
+      throw new Error(`Component ${componentRef.name} not found`);
+    }
+
+    this.entityManager.components[componentListIndex][this.id] = undefined;
+    if (
+      this.entityManager.components.every(
+        (cList) => cList[this.id] === undefined,
+      )
+    ) {
+      this.entityManager.deadBuffer.push(this.id);
+    }
+
+    return this;
+  }
+
+  public getComponent<P extends Properties>(
+    componentRef: typeof Component<P>,
+  ): Component<P> {
+    this.throwIfFlushed();
+
+    const componentListIndex = this.entityManager.componentListIndexMap.get(
+      componentRef.name,
+    );
+    const componentNotFoundError = `Component ${componentRef.name} not found`;
+
+    if (componentListIndex === undefined) {
+      throw new Error(componentNotFoundError);
+    }
+
+    const component =
+      this.entityManager.components[componentListIndex][this.id];
+    if (component === undefined) {
+      throw new Error(componentNotFoundError);
+    }
+    return component;
+  }
+
+  public getMutableComponent<P extends Properties>(
+    componentRef: typeof Component<P>,
+  ): Component<P> {
+    const component = this.getComponent(componentRef);
+
+    component.changed = true;
+    return component;
+  }
+}
