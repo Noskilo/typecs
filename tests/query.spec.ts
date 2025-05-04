@@ -1,5 +1,4 @@
-import { Component, Entity, World } from "../src";
-import { System } from "../src/system";
+import { Component, Entity, System, World } from "../src";
 
 class Position extends Component<{
   x: number;
