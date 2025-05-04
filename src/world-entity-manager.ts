@@ -2,7 +2,7 @@ import { Component } from "./component";
 import { Entity, EntityId } from "./entity";
 
 export class WorldEntityManager {
-  components: (Component | undefined)[][] = [];
+  components: (Component<any> | undefined)[][] = [];
   componentListIndexMap: Map<string, number> = new Map();
   entityPool: Entity[] = [];
   /**

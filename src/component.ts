@@ -9,18 +9,14 @@ export type Properties = {
     | Properties;
 };
 
-export abstract class Component<P extends Properties = any> {
+export abstract class Component<P extends Properties> {
   public data: P;
 
   public changed = false;
 
-  constructor();
-  constructor(initial: P);
-  constructor(initial?: P) {
-    this.data = initial ?? this.default();
+  constructor(initial: P) {
+    this.data = initial;
   }
-
-  abstract default(): P;
 
   toString() {
     return `${this.constructor.name}:${JSON.stringify(this.data)}`;

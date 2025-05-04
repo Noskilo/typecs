@@ -3,36 +3,16 @@ import { Component, Entity, System, World } from "../src";
 class Position extends Component<{
   x: number;
   y: number;
-}> {
-  default(): { x: number; y: number } {
-    return {
-      x: 0,
-      y: 0,
-    };
-  }
-}
+}> {}
 
 class Sprite extends Component<{
   image: string;
-}> {
-  default(): { image: string } {
-    return {
-      image: "",
-    };
-  }
-}
+}> {}
 
 class Dimensions extends Component<{
   width: number;
   height: number;
-}> {
-  default(): { width: number; height: number } {
-    return {
-      width: 0,
-      height: 0,
-    };
-  }
-}
+}> {}
 
 class MoveSystem extends System {
   public schema() {
@@ -66,9 +46,30 @@ describe("query components", () => {
   let entity2: Entity;
   let entity3: Entity;
 
+  const defaultPosition = () =>
+    new Position({
+      x: 0,
+      y: 0,
+    });
+
+  const defaultDimension = () =>
+    new Dimensions({
+      width: 0,
+      height: 0,
+    });
+
+  const defaultSprite = () =>
+    new Sprite({
+      image: "",
+    });
+
   beforeEach(() => {
     world = new World();
-    entity1 = world.createEntity(Position, Dimensions, Sprite);
+    entity1 = world.createEntity(
+      defaultPosition(),
+      defaultDimension(),
+      defaultSprite(),
+    );
     entity2 = world.createEntity(
       new Dimensions({ width: 1, height: 1 }),
       new Position({ x: 1, y: 1 }),

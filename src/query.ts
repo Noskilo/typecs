@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 
 import { WorldEntityManager } from "./world-entity-manager";
 
-type TypeofComponent = typeof Component;
+type TypeofComponent = typeof Component<any>;
 
 export type QueryOptions =
   | {

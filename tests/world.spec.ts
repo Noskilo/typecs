@@ -3,36 +3,16 @@ import { Component, Entity, World } from "../src";
 class Position extends Component<{
   x: number;
   y: number;
-}> {
-  default(): { x: number; y: number } {
-    return {
-      x: 0,
-      y: 0,
-    };
-  }
-}
+}> {}
 
 class Sprite extends Component<{
   image: string;
-}> {
-  default(): { image: string } {
-    return {
-      image: "",
-    };
-  }
-}
+}> {}
 
 class Dimensions extends Component<{
   width: number;
   height: number;
-}> {
-  default(): { width: number; height: number } {
-    return {
-      width: 0,
-      height: 0,
-    };
-  }
-}
+}> {}
 
 describe("world entity creation", () => {
   let world: World;
@@ -40,9 +20,30 @@ describe("world entity creation", () => {
   let entity2: Entity;
   let entity3: Entity;
 
+  const defaultPosition = () =>
+    new Position({
+      x: 0,
+      y: 0,
+    });
+
+  const defaultDimension = () =>
+    new Dimensions({
+      width: 0,
+      height: 0,
+    });
+
+  const defaultSprite = () =>
+    new Sprite({
+      image: "",
+    });
+
   beforeEach(() => {
     world = new World();
-    entity1 = world.createEntity(Position, Dimensions, Sprite);
+    entity1 = world.createEntity(
+      defaultPosition(),
+      defaultDimension(),
+      defaultSprite(),
+    );
     entity2 = world.createEntity(
       new Dimensions({ width: 1, height: 1 }),
       new Position({ x: 1, y: 1 }),
@@ -137,15 +138,9 @@ describe("world entity creation", () => {
       world["entityManager"].components[dimensionsComponentIndex!][0];
     const entity1Sprite =
       world["entityManager"].components[spriteComponentIndex!][0];
-    expect(
-      entity1Position,
-    ).toBeInstanceOf(Position);
-    expect(
-      entity1Dimensions,
-    ).toBeInstanceOf(Dimensions);
-    expect(
-      entity1Sprite,
-    ).toBeInstanceOf(Sprite);
+    expect(entity1Position).toBeInstanceOf(Position);
+    expect(entity1Dimensions).toBeInstanceOf(Dimensions);
+    expect(entity1Sprite).toBeInstanceOf(Sprite);
 
     const entity2Position =
       world["entityManager"].components[positionComponentIndex!][1];
@@ -153,15 +148,9 @@ describe("world entity creation", () => {
       world["entityManager"].components[dimensionsComponentIndex!][1];
     const entity2Sprite =
       world["entityManager"].components[spriteComponentIndex!][1];
-    expect(
-      entity2Position,
-    ).toBeInstanceOf(Position);
-    expect(
-      entity2Dimensions,
-    ).toBeInstanceOf(Dimensions);
-    expect(
-      entity2Sprite,
-    ).toBeInstanceOf(Sprite);
+    expect(entity2Position).toBeInstanceOf(Position);
+    expect(entity2Dimensions).toBeInstanceOf(Dimensions);
+    expect(entity2Sprite).toBeInstanceOf(Sprite);
 
     const entity3Position =
       world["entityManager"].components[positionComponentIndex!][2];
@@ -169,16 +158,8 @@ describe("world entity creation", () => {
       world["entityManager"].components[dimensionsComponentIndex!][2];
     const entity3Sprite =
       world["entityManager"].components[spriteComponentIndex!][2];
-    expect(
-      entity3Position,
-    ).toBeInstanceOf(Position);
-    expect(
-      entity3Dimensions,
-    ).toBeUndefined();
-    expect(
-      entity3Sprite,
-    ).toBeInstanceOf(Sprite);
-
-
+    expect(entity3Position).toBeInstanceOf(Position);
+    expect(entity3Dimensions).toBeUndefined();
+    expect(entity3Sprite).toBeInstanceOf(Sprite);
   });
 });
