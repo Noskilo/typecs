@@ -5,7 +5,7 @@ import { WorldEntityManager } from "./world-entity-manager";
 export type EntityId = number;
 
 export class Entity {
-  private readonly flushCounter: number;
+  private flushCounter: number;
 
   constructor(
     private readonly id: EntityId,
@@ -18,6 +18,10 @@ export class Entity {
     if (this.flushCounter !== this.entityManager.stats.flushCounter) {
       throw new Error("Flushed entity cannot be modified");
     }
+  }
+
+  public reset() {
+    this.flushCounter = this.entityManager.stats.flushCounter;
   }
 
   public addComponent<P extends Properties, T extends Component<P>>(

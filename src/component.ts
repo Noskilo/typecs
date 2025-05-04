@@ -1,12 +1,12 @@
 export type Properties = {
   [K in string]:
-  | string
-  | number
-  | boolean
-  | bigint
-  | object
-  | null
-  | Properties;
+    | string
+    | number
+    | boolean
+    | bigint
+    | object
+    | null
+    | Properties;
 };
 
 export abstract class Component<P extends Properties = any> {
