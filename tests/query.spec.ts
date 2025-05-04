@@ -53,8 +53,8 @@ class MoveSystem extends System {
       const dimensions = entity.getMutableComponent(Dimensions);
 
       if (position && dimensions) {
-        position.properties.x += 1;
-        position.properties.y += 1;
+        position.data.x += 1;
+        position.data.y += 1;
       }
     });
   }
@@ -92,7 +92,7 @@ describe("query components", () => {
     expect(query[0]).toBe(entity1);
     expect(query[1]).toBe(entity2);
 
-    expect(query[0].getComponent(Position).properties).toEqual({
+    expect(query[0].getComponent(Position).data).toEqual({
       x: 1,
       y: 1,
     });

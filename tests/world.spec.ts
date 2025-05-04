@@ -59,15 +59,15 @@ describe("world entity creation", () => {
     expect(entity1.getComponent(Position)).toBeInstanceOf(Position);
     expect(entity1.getComponent(Dimensions)).toBeInstanceOf(Dimensions);
     expect(entity1.getComponent(Sprite)).toBeInstanceOf(Sprite);
-    expect(entity1.getComponent(Position).properties).toEqual({
+    expect(entity1.getComponent(Position).data).toEqual({
       x: 0,
       y: 0,
     });
-    expect(entity1.getComponent(Dimensions).properties).toEqual({
+    expect(entity1.getComponent(Dimensions).data).toEqual({
       width: 0,
       height: 0,
     });
-    expect(entity1.getComponent(Sprite).properties).toEqual({
+    expect(entity1.getComponent(Sprite).data).toEqual({
       image: "",
     });
 
@@ -75,15 +75,15 @@ describe("world entity creation", () => {
     expect(entity2.getComponent(Position)).toBeInstanceOf(Position);
     expect(entity2.getComponent(Dimensions)).toBeInstanceOf(Dimensions);
     expect(entity2.getComponent(Sprite)).toBeInstanceOf(Sprite);
-    expect(entity2.getComponent(Position).properties).toEqual({
+    expect(entity2.getComponent(Position).data).toEqual({
       x: 1,
       y: 1,
     });
-    expect(entity2.getComponent(Dimensions).properties).toEqual({
+    expect(entity2.getComponent(Dimensions).data).toEqual({
       width: 1,
       height: 1,
     });
-    expect(entity2.getComponent(Sprite).properties).toEqual({
+    expect(entity2.getComponent(Sprite).data).toEqual({
       image: "entity2.png",
     });
 
@@ -93,11 +93,11 @@ describe("world entity creation", () => {
       "Component Dimensions not found",
     );
     expect(entity3.getComponent(Sprite)).toBeInstanceOf(Sprite);
-    expect(entity3.getComponent(Position).properties).toEqual({
+    expect(entity3.getComponent(Position).data).toEqual({
       x: 2,
       y: 2,
     });
-    expect(entity3.getComponent(Sprite).properties).toEqual({
+    expect(entity3.getComponent(Sprite).data).toEqual({
       image: "entity3.png",
     });
   });
