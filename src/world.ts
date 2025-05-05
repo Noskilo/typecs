@@ -11,6 +11,14 @@ export class World {
   );
 
   private systems: System[] = [];
+  private systemsToInitialize: System[] = [];
+
+  public terminate() {
+    for (const system of this.systems) {
+      system.finalize();
+    }
+    this.entityManager.componentListIndexMap.clear();
+  }
 
   public query(options: QueryOptions) {
     return this.queryDataLoader.load(options);
@@ -18,15 +26,25 @@ export class World {
 
   public addSystem(system: (new () => System) | System): World {
     if (system instanceof System) {
-      this.systems.push(system);
+      this.systemsToInitialize.unshift(system);
     } else {
-      this.systems.push(new system());
+      this.systemsToInitialize.unshift(new system());
     }
 
     return this;
   }
 
-  public async execute(): Promise<void> {
+  public async execute(lastTime?: number, deltaTime?: number): Promise<void> {
+    while (this.systemsToInitialize.length > 0) {
+      const system = this.systemsToInitialize.pop();
+      if (!system) {
+        break;
+      }
+      system.world = this;
+      await system.initialize();
+      this.systems.push(system);
+    }
+
     for (const system of this.systems) {
       const queryOptions = system.schema();
 
@@ -34,6 +52,8 @@ export class World {
         system.queries[key] = this.query(queryOptions[key]);
       }
 
+      system.deltaTime = deltaTime ?? 1;
+      system.lastTime = lastTime ?? 1;
       await system.execute();
     }
     this.entityManager.flush();

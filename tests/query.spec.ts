@@ -83,8 +83,8 @@ describe("query components", () => {
     world.addSystem(MoveSystem);
   });
 
-  test("move system", () => {
-    world.execute();
+  test("move system", async () => {
+    await world.execute();
     const query = world.query({
       include: [Position, Dimensions],
     });
