@@ -35,9 +35,8 @@ export class World {
       }
 
       await system.execute();
-      this.entityManager.flush();
     }
-
+    this.entityManager.flush();
     return;
   }
 

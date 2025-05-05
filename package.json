@@ -2,7 +2,6 @@
   "name": "typecs",
   "version": "1.0.0",
   "description": "An ECS (Entity-Component-System) library for TypeScript, designed to be lightweight and easy to use.",
-  "type": "module",
   "main": "lib/index.umd.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",

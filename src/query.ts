@@ -29,11 +29,9 @@ export class QueryDataLoader {
         component.name,
       );
 
-      if (componentIndex === undefined) {
-        throw new Error(`Component ${component.name} not registered`);
+      if (componentIndex !== undefined) {
+        componentIndices.push(componentIndex);
       }
-
-      componentIndices.push(componentIndex);
     }
 
     return componentIndices;

@@ -24,9 +24,7 @@ export class Entity {
     this.flushCounter = this.entityManager.stats.flushCounter;
   }
 
-  public addComponent<P extends Properties, T extends Component<P>>(
-    componentToAdd: Component<P>,
-  ) {
+  public addComponent<P extends Properties>(componentToAdd: Component<P>) {
     this.throwIfFlushed();
 
     const componentListIndex = this.entityManager.componentListIndexMap.get(
@@ -83,8 +81,6 @@ export class Entity {
   public getComponent<P extends Properties>(
     componentRef: typeof Component<P>,
   ): Component<P> {
-    this.throwIfFlushed();
-
     const componentListIndex = this.entityManager.componentListIndexMap.get(
       componentRef.name,
     );
@@ -105,6 +101,8 @@ export class Entity {
   public getMutableComponent<P extends Properties>(
     componentRef: typeof Component<P>,
   ): Component<P> {
+    this.throwIfFlushed();
+
     const component = this.getComponent(componentRef);
 
     component.changed = true;
