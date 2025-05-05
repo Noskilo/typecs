@@ -63,7 +63,7 @@ export class Entity {
       componentRef.name,
     );
     if (componentListIndex === undefined) {
-      throw new Error(`Component ${componentRef.name} not found`);
+      return this;
     }
 
     this.entityManager.components[componentListIndex][this.id] = undefined;
@@ -76,6 +76,30 @@ export class Entity {
     }
 
     return this;
+  }
+
+  public delete() {
+    this.throwIfFlushed();
+
+    for (const components of this.entityManager.components) {
+      components[this.id] = undefined;
+    }
+
+    this.entityManager.deadBuffer.push(this.id);
+  }
+
+  public hasComponent<P extends Properties>(
+    componentRef: typeof Component<P>,
+  ): boolean {
+    const componentListIndex = this.entityManager.componentListIndexMap.get(
+      componentRef.name,
+    );
+    if (componentListIndex === undefined) {
+      return false;
+    }
+    return (
+      this.entityManager.components[componentListIndex][this.id] !== undefined
+    );
   }
 
   public getComponent<P extends Properties>(
