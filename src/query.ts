@@ -31,6 +31,8 @@ export class QueryDataLoader {
 
       if (componentIndex !== undefined) {
         componentIndices.push(componentIndex);
+      } else {
+        componentIndices.push(-1);
       }
     }
 
@@ -38,6 +40,10 @@ export class QueryDataLoader {
   }
 
   load(options: QueryOptions) {
+    if (this.entityManager.components.length === 0) {
+      return [];
+    }
+
     const includeComponentIndices: number[] = this.getComponentIndices(
       options.include ?? [],
     );
@@ -55,10 +61,12 @@ export class QueryDataLoader {
       const isMatch =
         includeComponentIndices.every(
           (index) =>
+            index !== -1 &&
             this.entityManager.components[index][entityId] !== undefined,
         ) &&
         excludeComponentIndices.every(
           (index) =>
+            index === -1 ||
             this.entityManager.components[index][entityId] === undefined,
         );
 
