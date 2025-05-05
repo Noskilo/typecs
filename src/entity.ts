@@ -25,12 +25,9 @@ export class Entity {
   }
 
   public addComponent<P extends Properties, T extends Component<P>>(
-    component: Component<P> | (new () => T),
+    componentToAdd: Component<P>,
   ) {
     this.throwIfFlushed();
-
-    const componentToAdd =
-      component instanceof Component ? component : new component();
 
     const componentListIndex = this.entityManager.componentListIndexMap.get(
       componentToAdd.constructor.name,

@@ -41,9 +41,7 @@ export class World {
     return;
   }
 
-  public createEntity(
-    ...components: (Component<any> | (new () => Component<any>))[]
-  ): Entity {
+  public createEntity(...components: Component<any>[]): Entity {
     const hasDeadEntities = this.entityManager.deadPool.length > 0;
     const entityId =
       this.entityManager.deadPool.pop() ??
