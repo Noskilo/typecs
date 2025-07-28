@@ -46,7 +46,9 @@ export class Entity {
       this.entityManager.components.push(newSet);
     }
 
-    const deadEntityIndex = this.entityManager.deadBuffer.indexOf(this.id);
+    const deadEntityIndex = this.entityManager.deadBuffer.findIndex(
+      ([_, entityId]) => this.id === entityId,
+    );
     if (deadEntityIndex !== -1) {
       this.entityManager.deadBuffer.splice(deadEntityIndex, 1);
     }
@@ -78,7 +80,10 @@ export class Entity {
         (cList) => cList[this.id]?.removed_at !== undefined,
       )
     ) {
-      this.entityManager.deadBuffer.push(this.id);
+      this.entityManager.deadBuffer.push([
+        this.entityManager.stats.flushCounter,
+        this.id,
+      ]);
     }
 
     return this;
@@ -93,7 +98,10 @@ export class Entity {
         component.removed_at = this.entityManager.stats.flushCounter;
     }
 
-    this.entityManager.deadBuffer.push(this.id);
+    this.entityManager.deadBuffer.push([
+      this.entityManager.stats.flushCounter,
+      this.id,
+    ]);
   }
 
   public hasComponent<P extends Properties>(

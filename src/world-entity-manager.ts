@@ -16,15 +16,28 @@ export class WorldEntityManager {
    * A buffer of dead entities that are waiting to be added to the dead pool.
    * @private
    */
-  deadBuffer: EntityId[] = [];
+  deadBuffer: [number, EntityId][] = [];
   stats = {
     entityIdCounter: 0,
     flushCounter: 0,
   };
 
   flush() {
-    this.deadPool = this.deadPool.concat(this.deadBuffer);
-    this.deadBuffer = [];
+    while (this.deadBuffer.length > 0) {
+      const deadEntity = this.deadBuffer[0];
+      if (
+        deadEntity === undefined ||
+        deadEntity[0] === this.stats.flushCounter
+      ) {
+        break;
+      }
+
+      const deadEntityToPlaceInPool = this.deadBuffer.shift();
+
+      if (deadEntityToPlaceInPool) {
+        this.deadPool.push(deadEntityToPlaceInPool[1]);
+      }
+    }
 
     this.stats.flushCounter = (this.stats.flushCounter + 1) % MAX_FLUSH_COUNTER;
   }
