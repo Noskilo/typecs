@@ -14,6 +14,11 @@ export abstract class Component<P extends Properties> {
 
   public changed = false;
 
+  /**
+   * The flush counter value at which this component was marked for removal.
+   */
+  public removed_at?: number;
+
   constructor(initial: P) {
     this.data = initial;
   }

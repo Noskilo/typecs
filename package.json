@@ -1,9 +1,8 @@
 {
   "name": "typecs",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "An ECS (Entity-Component-System) library for TypeScript, designed to be lightweight and easy to use.",
   "main": "lib/index.umd.js",
-  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --config jest.config.mjs",

@@ -5,16 +5,24 @@ import { WorldEntityManager } from "./world-entity-manager";
 
 type TypeofComponent = typeof Component<any>;
 
+export enum QueryOptionType {
+  CURRENT = "current",
+  REMOVED = "removed",
+}
+
 export type QueryOptions =
   | {
+      type?: QueryOptionType;
       include: TypeofComponent[];
       exclude: TypeofComponent[];
     }
   | {
+      type?: QueryOptionType;
       include: TypeofComponent[];
       exclude?: TypeofComponent[];
     }
   | {
+      type?: QueryOptionType;
       include?: TypeofComponent[];
       exclude: TypeofComponent[];
     };
@@ -58,17 +66,46 @@ export class QueryDataLoader {
       entityId < this.entityManager.components[0].length;
       entityId++
     ) {
-      const isMatch =
-        includeComponentIndices.every(
-          (index) =>
-            index !== -1 &&
-            this.entityManager.components[index][entityId] !== undefined,
-        ) &&
-        excludeComponentIndices.every(
-          (index) =>
-            index === -1 ||
-            this.entityManager.components[index][entityId] === undefined,
-        );
+      let isMatch = false;
+
+      if (
+        options.type === QueryOptionType.CURRENT ||
+        options.type === undefined
+      ) {
+        isMatch =
+          includeComponentIndices.every(
+            (index) =>
+              index !== -1 &&
+              this.entityManager.components[index][entityId] !== undefined &&
+              this.entityManager.components[index][entityId]?.removed_at ===
+                undefined,
+          ) &&
+          excludeComponentIndices.every(
+            (index) =>
+              index === -1 ||
+              this.entityManager.components[index][entityId] === undefined ||
+              this.entityManager.components[index][entityId]?.removed_at !==
+                undefined,
+          );
+      } else if (options.type === QueryOptionType.REMOVED) {
+        isMatch =
+          includeComponentIndices.every(
+            (index) =>
+              index !== -1 &&
+              this.entityManager.components[index][entityId] !== undefined &&
+              this.entityManager.components[index][entityId]?.removed_at ===
+                this.entityManager.getPreviousFlushCounter(),
+          ) &&
+          excludeComponentIndices.every(
+            (index) =>
+              index === -1 ||
+              this.entityManager.components[index][entityId] === undefined ||
+              this.entityManager.components[index][entityId]?.removed_at !==
+                this.entityManager.getPreviousFlushCounter(),
+          );
+      } else {
+        throw new Error(`Unknown query type: ${options.type}`);
+      }
 
       if (isMatch) {
         const entity = this.entityManager["entityPool"][entityId];

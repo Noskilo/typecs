@@ -66,10 +66,16 @@ export class Entity {
       return this;
     }
 
-    this.entityManager.components[componentListIndex][this.id] = undefined;
+    const component =
+      this.entityManager.components[componentListIndex][this.id];
+
+    if (component) {
+      component.removed_at = this.entityManager.stats.flushCounter;
+    }
+
     if (
       this.entityManager.components.every(
-        (cList) => cList[this.id] === undefined,
+        (cList) => cList[this.id]?.removed_at !== undefined,
       )
     ) {
       this.entityManager.deadBuffer.push(this.id);
@@ -82,7 +88,9 @@ export class Entity {
     this.throwIfFlushed();
 
     for (const components of this.entityManager.components) {
-      components[this.id] = undefined;
+      const component = components[this.id];
+      if (component)
+        component.removed_at = this.entityManager.stats.flushCounter;
     }
 
     this.entityManager.deadBuffer.push(this.id);
@@ -98,7 +106,10 @@ export class Entity {
       return false;
     }
     return (
-      this.entityManager.components[componentListIndex][this.id] !== undefined
+      this.entityManager.components[componentListIndex][this.id] !==
+        undefined &&
+      this.entityManager.components[componentListIndex][this.id]?.removed_at ===
+        undefined
     );
   }
 
